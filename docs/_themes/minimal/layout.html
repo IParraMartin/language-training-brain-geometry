@@ -11,22 +11,20 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <script>
-    /* Colour scheme. A choice made with the toggle is stored per browser and
-       wins over the system preference; without one, the page follows the
-       system, live. The scheme is applied here, in <head> after the
-       stylesheets, so the first paint already uses it. data-theme drives the
-       palette in minimal.css and the Mermaid theme; the media attribute of
+    /* Colour scheme. The page is light unless the reader chose dark with the
+       toggle; that choice is stored per browser. The scheme is applied here,
+       in <head> after the stylesheets, so the first paint already uses it.
+       data-theme drives the palette in minimal.css; the media attribute of
        Sphinx's dark Pygments stylesheet is switched to match. */
     (function () {
       var KEY = "language-training-brain-geometry:theme";
       var root = document.documentElement;
-      var system = window.matchMedia("(prefers-color-scheme: dark)");
       function stored() {
         try { return localStorage.getItem(KEY); } catch (e) { return null; }
       }
       function current() {
         var choice = stored();
-        return choice === "dark" || choice === "light" ? choice : (system.matches ? "dark" : "light");
+        return choice === "dark" ? "dark" : "light";
       }
       function apply(theme) {
         root.setAttribute("data-theme", theme);
@@ -39,9 +37,6 @@
         });
       }
       apply(current());
-      if (system.addEventListener) {
-        system.addEventListener("change", function () { if (!stored()) apply(current()); });
-      }
       document.addEventListener("DOMContentLoaded", function () {
         document.querySelectorAll(".theme-toggle").forEach(function (button) {
           button.hidden = false;
