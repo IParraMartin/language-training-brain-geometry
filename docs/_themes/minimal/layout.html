@@ -57,6 +57,11 @@
   </script>
 {%- endblock %}
 
+{#- the home page title is the paper title alone; other pages prefix their own title -#}
+{%- block htmltitle %}
+  <title>{% if pagename == root_doc %}{{ docstitle|e }}{% else %}{{ title|striptags|e }} &#8212; {{ docstitle|e }}{% endif %}</title>
+{%- endblock %}
+
 {%- block relbar1 %}{% endblock %}
 {%- block relbar2 %}{% endblock %}
 {%- block sidebar1 %}{% endblock %}
