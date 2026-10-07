@@ -1,0 +1,18 @@
+diff --git a/brainscore_language/metrics/linear_predictivity/ridgecv_gpu.py b/brainscore_language/metrics/linear_predictivity/ridgecv_gpu.py
+index 7964cf7..ae2b539 100644
+--- a/brainscore_language/metrics/linear_predictivity/ridgecv_gpu.py
++++ b/brainscore_language/metrics/linear_predictivity/ridgecv_gpu.py
+@@ -555,7 +555,12 @@ class RidgeGCVTorch:
+ 
+         # Primal coefficients: w = X^T c  (using preprocessed Xp)
+         coef = _safe_sparse_dot(self.dual_coef_.T, Xp, dense_output=True)  # [T, p]
+-        if yp.ndim == 1 or yp.shape[1] == 1:
++        # Ravel only when the caller passed a genuinely 1-D target. A single-column
++        # 2-D target (n, 1) -- Tuckute2024.language has exactly one neuroid -- must
++        # keep its column axis, or predict() returns a 1-D vector that
++        # _package_prediction then packages against the source's 2-D dims and
++        # raises "different number of dimensions on data and dims: 1 vs 2".
++        if yp.ndim == 1:
+             coef = coef.ravel()
+         self.coef_ = coef
+ 

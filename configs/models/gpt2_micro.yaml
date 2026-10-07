@@ -1,0 +1,10 @@
+model_type: gpt2
+n_embd: 128
+n_layer: 4
+n_head: 4
+n_positions: 256
+n_ctx: 256
+embd_pdrop: 0.1
+attn_pdrop: 0.1
+resid_pdrop: 0.1
+attn_implementation: "sdpa"

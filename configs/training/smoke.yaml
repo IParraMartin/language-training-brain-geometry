@@ -1,0 +1,56 @@
+# Smallest training config that still exercises the real LMTrainer path.
+# Five optimizer steps prove the GPU plumbing works and nothing else. Never use this for a scientific run.
+
+# I/O and logging settings
+output_dir: ./out/smoke
+report_to: "none"
+run_name: "smoke"
+push_to_hub: False
+
+# Evaluation strategy
+eval_strategy: "steps"
+eval_steps: 5
+patience: null
+
+# Batch sizes
+auto_find_batch_size: False
+per_device_train_batch_size: 4
+per_device_eval_batch_size: 4
+gradient_accumulation_steps: 1
+
+# Optimizer settings
+optim: "adamw_torch_fused"
+learning_rate: 0.0001
+weight_decay: 0.01
+max_grad_norm: 1.0
+
+# Training duration
+max_steps: 5
+
+# Learning rate scheduler
+lr_scheduler_type: "constant"
+warmup_steps: 0
+
+# Logging settings
+logging_strategy: "steps"
+logging_steps: 1
+
+# Save settings — the final weights are written by LMTrainer itself, so periodic
+# checkpointing (and best-model tracking) is dead weight in a smoke run.
+save_strategy: "no"
+load_best_model_at_end: False
+
+# Hardware settings
+seed: 42
+
+# Precision settings
+bf16: True
+bf16_full_eval: True
+
+# Dataloader settings
+dataloader_drop_last: False
+dataloader_num_workers: 0
+dataloader_pin_memory: True
+
+# Gradient checkpointing
+gradient_checkpointing: False

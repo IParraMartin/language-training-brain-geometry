@@ -1,0 +1,118 @@
+{#- Minimal project-page layout: no sidebars or relation bars; a light text
+    navigation on documentation pages, a centered content column, and a
+    full-width footer band. The home page (root document) has no navigation,
+    like a paper project page. Every page has a light/dark toggle. -#}
+{%- extends "basic/layout.html" %}
+
+{%- block extrahead %}
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Castoro:ital@0;1&family=Google+Sans:wght@400;500;600&family=Noto+Sans:ital,wght@0,400;0,600;0,700;1,400&display=swap">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script>
+    /* Colour scheme. A choice made with the toggle is stored per browser and
+       wins over the system preference; without one, the page follows the
+       system, live. The scheme is applied here, in <head> after the
+       stylesheets, so the first paint already uses it. data-theme drives the
+       palette in minimal.css and the Mermaid theme; the media attribute of
+       Sphinx's dark Pygments stylesheet is switched to match. */
+    (function () {
+      var KEY = "language-training-brain-geometry:theme";
+      var root = document.documentElement;
+      var system = window.matchMedia("(prefers-color-scheme: dark)");
+      function stored() {
+        try { return localStorage.getItem(KEY); } catch (e) { return null; }
+      }
+      function current() {
+        var choice = stored();
+        return choice === "dark" || choice === "light" ? choice : (system.matches ? "dark" : "light");
+      }
+      function apply(theme) {
+        root.setAttribute("data-theme", theme);
+        var pygments = document.getElementById("pygments_dark_css");
+        if (pygments) pygments.media = theme === "dark" ? "all" : "not all";
+        var label = theme === "dark" ? "Switch to light mode" : "Switch to dark mode";
+        document.querySelectorAll(".theme-toggle").forEach(function (button) {
+          button.setAttribute("aria-label", label);
+          button.title = label;
+        });
+      }
+      apply(current());
+      if (system.addEventListener) {
+        system.addEventListener("change", function () { if (!stored()) apply(current()); });
+      }
+      document.addEventListener("DOMContentLoaded", function () {
+        document.querySelectorAll(".theme-toggle").forEach(function (button) {
+          button.hidden = false;
+          button.addEventListener("click", function () {
+            var next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+            try { localStorage.setItem(KEY, next); } catch (e) {}
+            apply(next);
+          });
+        });
+        apply(current());
+      });
+    })();
+  </script>
+{%- endblock %}
+
+{%- block relbar1 %}{% endblock %}
+{%- block relbar2 %}{% endblock %}
+{%- block sidebar1 %}{% endblock %}
+{%- block sidebar2 %}{% endblock %}
+
+{%- block header %}
+{%- if pagename != root_doc %}
+<nav class="topnav" aria-label="Documentation">
+  <div class="topnav-inner">
+    <a class="brand" href="{{ pathto(root_doc) }}">{{ project }}</a>
+    <div class="topnav-links">
+      <a href="{{ pathto('reproduction') }}">Reproduction</a>
+      <a href="{{ pathto('corpora') }}">Corpora</a>
+      <a href="{{ pathto('benchmarks') }}">Benchmarks</a>
+      <a href="{{ pathto('code_guide') }}">Code guide</a>
+      <a href="{{ pathto('search') }}" aria-label="Search"><i class="fa-solid fa-magnifying-glass"></i></a>
+      {%- if theme_repository_url %}
+      <a href="{{ theme_repository_url }}" aria-label="Code"><i class="fa-brands fa-github"></i></a>
+      {%- endif %}
+      <button type="button" class="theme-toggle" hidden><i class="fa-solid fa-moon" aria-hidden="true"></i><i class="fa-solid fa-sun" aria-hidden="true"></i></button>
+    </div>
+  </div>
+</nav>
+{%- endif %}
+{%- endblock %}
+
+{%- block content %}
+<main class="page {{ 'page-home' if pagename == root_doc else 'page-doc' }}">
+  {%- if pagename == root_doc %}
+  <button type="button" class="theme-toggle theme-toggle-home" hidden><i class="fa-solid fa-moon" aria-hidden="true"></i><i class="fa-solid fa-sun" aria-hidden="true"></i></button>
+  {%- endif %}
+  <div class="body" role="main">
+    {% block body %}{% endblock %}
+  </div>
+  {%- if pagename != root_doc and (prev or next) %}
+  <nav class="pager" aria-label="Previous and next pages">
+    <span>{%- if prev %}<a href="{{ prev.link|e }}">&larr; {{ prev.title }}</a>{%- endif %}</span>
+    <span>{%- if next %}<a href="{{ next.link|e }}">{{ next.title }} &rarr;</a>{%- endif %}</span>
+  </nav>
+  {%- endif %}
+</main>
+{%- endblock %}
+
+{%- block footer %}
+<footer class="site-footer">
+  <div class="footer-inner">
+    <p>
+      <a href="{{ pathto(root_doc) }}">{{ project }}</a> ·
+      <a href="{{ pathto('reproduction') }}">Reproduction</a> ·
+      <a href="{{ pathto('corpora') }}">Corpora</a> ·
+      <a href="{{ pathto('benchmarks') }}">Benchmarks</a>
+      {%- if theme_repository_url %} · <a href="{{ theme_repository_url }}">Code</a>{%- endif %}
+    </p>
+    <p>
+      Built with <a href="https://www.sphinx-doc.org/">Sphinx</a>. &copy; {{ copyright }}.
+    </p>
+  </div>
+</footer>
+{%- endblock %}

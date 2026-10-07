@@ -1,0 +1,16 @@
+cff-version: 1.2.0
+message: "If you use this code, please cite the paper."
+title: "Language Training Shapes Brain-Aligned Geometry"
+authors:
+  - family-names: Parra
+    given-names: Iñigo
+    affiliation: "Department of Linguistics, University of California, Berkeley"
+license: MIT
+preferred-citation:
+  type: conference-paper
+  title: "Language Training Shapes Brain-Aligned Geometry"
+  authors:
+    - family-names: Parra
+      given-names: Iñigo
+  collection-title: "Proceedings of the Workshop on Symmetry and Geometry in Neural Representations (NeurReps)"
+  year: 2026

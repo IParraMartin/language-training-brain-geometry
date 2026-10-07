@@ -1,0 +1,105 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "language-training-brain-geometry"
+version = "0.1.0"
+description = "Trains GPT-2 models on English and code corpora and compares their brain alignment and representational geometry."
+readme = "README.md"
+# Pinned to 3.11 by the `language/` submodule (brainscore_language) stack:
+#   - `gensim` has no prebuilt wheels for 3.13+ (source build needs Python.h).
+#   - `brainscore-core` pins `xarray<2022.6`, and xarray 2022.3.0 calls
+#     `entry_points().get(...)`, which Python 3.12 removed. Loading ANY neural
+#     benchmark raises AttributeError on 3.12+. xarray cannot be upgraded past
+#     the brainscore-core pin, so 3.11 is the only working interpreter.
+requires-python = ">=3.11,<3.12"
+license = { text = "MIT" }
+authors = [{ name = "Iñigo Parra" }]
+keywords = ["brain-score", "language-models", "gpt2", "neuroscience", "tokenizers"]
+
+dependencies = [
+    "torch>=2.10",
+    # transformers 5.x introduced breaking changes; pin below it until verified.
+    "transformers>=4.57,<5",
+    "datasets>=4.4",
+    "accelerate>=0.26",
+    "tokenizers>=0.20",
+    "PyYAML>=6",
+    # Upper bound matches brainscore_language's `numpy <2` pin. Without it,
+    # `uv sync` installs numpy 2.x and the editable `language/` install breaks.
+    "numpy>=1.26,<2",
+    "scipy>=1.11",
+    "pandas>=2.0",
+    "tqdm>=4.66",
+    "wandb>=0.17",
+    # NOTE: do NOT pin a modern xarray here. brainscore-core pins xarray<2022.6
+    # (see requires-python note above); a newer pin makes the environment
+    # unsatisfiable. xarray arrives transitively via brainscore-language.
+    # Brain-Score benchmarks, from the `language/` git submodule. Declared as a
+    # real dependency (see [tool.uv.sources]) so that `uv sync` installs it; a
+    # manual `uv pip install -e language/` would be removed by the next sync.
+    "brainscore-language",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8",
+    "pytest-cov>=5",
+    "ruff>=0.4",
+    # reference LEACE implementation, used only by tests/encoding/test_subspace_erasure.py to cross-check
+    # the numpy implementation; the test skips when it is unavailable
+    "concept-erasure>=0.2",
+]
+
+[dependency-groups]
+# documentation site only (docs/): uv run --only-group docs sphinx-build -b html -W docs site
+docs = [
+    "myst-parser>=4",
+    "sphinx>=8,<10",
+    "sphinx-copybutton>=0.5.2"
+]
+
+# console commands, each mapping to a main() in scripts/; `python scripts/<name>.py` works too
+[project.scripts]
+brain-build-corpora = "scripts.build_factorial_corpora:main"
+brain-checkpoint-sweep = "scripts.run_checkpoint_sweep:main"
+brain-confounds = "scripts.run_token_confounds:main"
+brain-correlate = "scripts.run_correlational_analysis:main"
+brain-embed-ft = "scripts.run_embedding_ft:main"
+brain-measure = "scripts.run_measurements:main"
+brain-manifold = "scripts.run_manifold_pressure:main"
+brain-patch = "scripts.run_causal_replacement:main"
+brain-score = "scripts.run_brainscores:main"
+brain-train = "scripts.train_model:main"
+brain-train-tokenizer = "scripts.train_tokenizer:main"
+brain-validate-corpora = "scripts.validate_factorial_corpora:main"
+
+[tool.setuptools.packages.find]
+where = ["src", "."]
+include = ["brain_code*", "scripts*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-v --tb=short"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I"]
+ignore = [
+    "E501",   # line too long (not enforced)
+    "E402",   # module-level import not at top — intentional pattern: env vars set before HF imports
+    "I001",   # import sort order is not enforced
+]
+
+[tool.uv]
+package = true
+
+[tool.uv.sources]
+# Resolve `brainscore-language` from the git submodule rather than PyPI, as an
+# editable install. This requires the submodule to be initialized:
+#     git submodule update --init --recursive
+brainscore-language = { path = "language", editable = true }

@@ -1,0 +1,57 @@
+name: Tests
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: [main]
+
+jobs:
+  unit-tests:
+    name: Unit tests (CPU-only)
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # uv sync resolves brainscore-language from the language/ submodule
+          submodules: recursive
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Apply the submodule patches
+        run: for p in patches/*.patch; do git -C language apply "$PWD/$p"; done
+
+      - name: Install project + dev dependencies
+        run: uv sync --extra dev
+
+      - name: Lint with ruff
+        run: uv run ruff check src/brain_code/ scripts/ tests/
+
+      - name: Unpack the results bundle
+        run: cd data && unzip -oq results_bundle.zip
+
+      - name: Run unit tests (excluding smoke)
+        run: uv run pytest tests/ -x --ignore=tests/test_smoke.py -q
+
+  smoke-test:
+    name: CPU toy smoke test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          version: "latest"
+
+      - name: Apply the submodule patches
+        run: for p in patches/*.patch; do git -C language apply "$PWD/$p"; done
+
+      - name: Install project + dev dependencies
+        run: uv sync --extra dev
+
+      - name: Run smoke test
+        run: uv run pytest tests/test_smoke.py -v

@@ -1,0 +1,13 @@
+# Locations read by scripts/reproduction/. Relative paths resolve against the repository root; each key can be
+# overridden with an environment variable BRAIN_CODE_<KEY>, e.g. BRAIN_CODE_RESULTS_ARCHIVE.
+
+# exported results tree (official and per-fold scores, interventions, factorial runs); not distributed
+results_archive: data/archives/results
+# geometry, PC-ablation and factorial outputs of the analysis runs; not distributed
+campaign_artifacts: data/archives/campaign
+# seed 43-46 checkpoints and random-weight models (only needed to recompute scores)
+seed_models: data/archives/seed_models
+# released results bundle that every statistic is computed from (unpacked from data/results_bundle.zip)
+results_bundle: data/results_bundle
+# outputs of the metadata-recovery scripts (packed splits, corpus audit, benchmark descriptions)
+recovered: results/recovered

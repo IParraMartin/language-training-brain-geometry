@@ -1,0 +1,10 @@
+# Minimal project-page theme for the paper page and documentation.
+# Layout and typography follow the Nerfies-style academic project pages.
+[theme]
+inherit = "basic"
+stylesheets = ["minimal.css"]
+sidebars = []
+pygments_style = { default = "default", dark = "github-dark" }
+
+[options]
+repository_url = ""

@@ -1,0 +1,56 @@
+name: docs
+
+# Builds the project page and documentation from docs/ (Sphinx, local minimal theme) and deploys it to
+# GitHub Pages.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    paths: ["docs/**", "pyproject.toml", "uv.lock", ".github/workflows/docs.yml"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - uses: astral-sh/setup-uv@v4
+        with:
+          python-version: "3.11"
+
+      # only the documentation tools are installed; the page needs no model or benchmark code
+      - name: Install documentation dependencies
+        run: uv sync --only-group docs --frozen
+
+      - name: Build site
+        run: uv run --only-group docs --frozen sphinx-build -b html -W --keep-going docs site
+
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: site
+
+  deploy:
+    # opt-in: Pages sites of private repositories are public on non-Enterprise plans, so deployment
+    # runs only when the repository variable DEPLOY_DOCS is 'true'
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/main' && vars.DEPLOY_DOCS == 'true'
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

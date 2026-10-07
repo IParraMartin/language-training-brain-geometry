@@ -1,0 +1,26 @@
+# environment and caches
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+cache/
+.brainio/
+.result_caching/
+wandb/
+
+# analysis outputs, checkpoints and logs are regenerable
+results/
+checkpoints/
+logs/
+out/
+
+# unpacked or downloaded data; the results bundle ships as data/results_bundle.zip
+data/results_bundle/
+data/archives/
+data/factorial_corpora/
+
+.DS_Store
+
+# built documentation site
+site/

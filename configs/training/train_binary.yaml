@@ -1,0 +1,64 @@
+# I/O and logging settings
+output_dir: ./out
+report_to: "wandb"
+run_name: "gpt2_small_binary"
+push_to_hub: True
+hub_strategy: "end"
+hub_private_repo: True
+hub_model_id: "IParraMartin/gpt2-binary"
+
+# Evaluation strategy
+eval_strategy: "steps"
+eval_steps: 1000
+patience: 5
+
+# Batch sizes
+auto_find_batch_size: False
+per_device_train_batch_size: 16
+per_device_eval_batch_size: 16
+gradient_accumulation_steps: 1
+torch_empty_cache_steps: 500
+
+# Optimizer settings
+optim: "adamw_torch_fused"
+learning_rate: 0.0001
+weight_decay: 0.01
+adam_beta1: 0.9
+adam_beta2: 0.999
+max_grad_norm: 1.0
+
+# Training duration
+max_steps: 30517
+
+# Learning rate scheduler
+lr_scheduler_type: "cosine"
+warmup_steps: 1000
+
+# Logging settings
+logging_dir: "./log"
+logging_strategy: "steps"
+logging_steps: 10
+
+# Save settings
+save_strategy: "steps"
+save_steps: 1000
+save_total_limit: 1
+load_best_model_at_end: True
+metric_for_best_model: "eval_loss"
+greater_is_better: False
+
+# Hardware settings
+seed: 42
+
+# Precision settings
+bf16: True
+bf16_full_eval: True
+
+# Dataloader settings
+dataloader_drop_last: False
+dataloader_num_workers: 4
+dataloader_pin_memory: True
+
+# Gradient checkpointing
+gradient_checkpointing: True
+
