@@ -1,4 +1,4 @@
-# Language training shapes brain-aligned geometry
+# Language, not code abstraction: natural-language training shapes brain-aligned geometry
 
 Code and data to reproduce a controlled comparison of GPT-2 small models trained on English (TinyStories)
 and on four code corpora (Python, C, x86-64 assembly, and machine code written as hexadecimal text), all

@@ -66,7 +66,7 @@
 {%- if pagename != root_doc %}
 <nav class="topnav" aria-label="Documentation">
   <div class="topnav-inner">
-    <a class="brand" href="{{ pathto(root_doc) }}">{{ project }}</a>
+    <a class="brand" href="{{ pathto(root_doc) }}">{{ shorttitle|e }}</a>
     <div class="topnav-links">
       <a href="{{ pathto('reproduction') }}">Reproduction</a>
       <a href="{{ pathto('corpora') }}">Corpora</a>
@@ -104,7 +104,7 @@
 <footer class="site-footer">
   <div class="footer-inner">
     <p>
-      <a href="{{ pathto(root_doc) }}">{{ project }}</a> ·
+      <a href="{{ pathto(root_doc) }}">{{ shorttitle|e }}</a> ·
       <a href="{{ pathto('reproduction') }}">Reproduction</a> ·
       <a href="{{ pathto('corpora') }}">Corpora</a> ·
       <a href="{{ pathto('benchmarks') }}">Benchmarks</a>

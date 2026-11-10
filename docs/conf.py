@@ -7,7 +7,7 @@ tools are needed to build it: ``uv run --only-group docs sphinx-build -b html -W
 
 from __future__ import annotations
 
-project = "Language Training Shapes Brain-Aligned Geometry"
+project = "Language, Not Code Abstraction: Natural-language Training Shapes Brain-aligned Geometry"
 author = "Iñigo Parra"
 copyright = "2026, Iñigo Parra"
 release = "1.0.0"
